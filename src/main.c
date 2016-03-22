@@ -43,6 +43,7 @@ char              *sys_locale;
 const char        *now_text_default = "NOW";
 
 Window            *now_window;
+Layer             *now_center_layer;
 TextLayer         *now_text_layer;
 Layer             *now_battery_layer;
 TextStyle          now_text_style;
@@ -52,6 +53,7 @@ char               clock_text[16],
                    clock_date[64];
 
 Window            *clock_window;
+Layer             *clock_center_layer;
 Layer             *clock_battery_layer;
 BatteryStyle       clock_battery_style;
 TextLayer         *clock_text_layer;
@@ -103,34 +105,31 @@ void draw_battery(Layer *layer, GContext *ctx) {
   }
 }
 
-void update_center_text(TextLayer *layer, const TextStyle *style, const char *text) {
-  GRect bounds = layer_get_bounds(window_get_root_layer(layer_get_window((Layer*)layer)));
-  GSize size = graphics_text_layout_get_content_size(text,
-                                                     style->font,
-                                                     bounds,
-                                                     style->overflow,
-                                                     style->alignment
-                                                    );
-  layer_set_frame((Layer*)layer, GRect(0, ((bounds.size.h - size.h) / 2) - 5, bounds.size.w, size.h));
-  text_layer_set_text(layer, text);
-  text_layer_set_font(layer, style->font);
-  text_layer_set_overflow_mode(layer, style->overflow);
-  text_layer_set_text_alignment(layer, style->alignment);
-  text_layer_set_text_color(layer, style->color);
-  text_layer_set_background_color(layer, style->background);
+void layer_center_vertical(Layer *layer, Layer *parent, Layer *children) {
+  GRect bounds_parent = layer_get_bounds(parent);
+  GSize content = { 0, 0 };
+  
+  for(void *l = children; l != NULL; l += sizeof(void*)) {
+    GRect frame = layer_get_frame((Layer*)l);
+    layer_set_frame((Layer*)l, GRect(0, content.h, bounds_parent.size.w, content.h + frame.size.h));
+    content.h = (content.h ? content.h + 5: content.h) + frame.size.h;
+  }
+  
+  layer_set_frame((Layer*)layer, GRect(bounds_parent.origin.x,
+                                       bounds_parent.origin.y + ((bounds_parent.size.h - content.h) / 2) - 5,
+                                       bounds_parent.size.w,
+                                       content.h));
 }
 
-void update_below_text(TextLayer *layer, Layer *below, const TextStyle *style, const char *text) {
-  GRect bounds = layer_get_bounds(window_get_root_layer(layer_get_window((Layer*)layer)));
+void update_text(TextLayer *layer, Layer *parent, const TextStyle *style, const char *text) {
+  GRect bounds = layer_get_bounds(parent);
   GSize size = graphics_text_layout_get_content_size(text,
                                                      style->font,
                                                      bounds,
                                                      style->overflow,
                                                      style->alignment
                                                     );
-  GRect below_frame = layer_get_frame(below);
-  
-  layer_set_frame((Layer*)layer, GRect(0, below_frame.origin.y + below_frame.size.h + 2, bounds.size.w, size.h));
+  layer_set_frame((Layer*)layer, GRect(0, 0, bounds.size.w, size.h));
   text_layer_set_text(layer, text);
   text_layer_set_font(layer, style->font);
   text_layer_set_overflow_mode(layer, style->overflow);
@@ -140,12 +139,25 @@ void update_below_text(TextLayer *layer, Layer *below, const TextStyle *style, c
 }
 
 void update_now() {
-  update_center_text(now_text_layer, &now_text_style, now_text_default);
+  Layer* layers[] = {
+    (Layer*)now_text_layer,
+    NULL
+  };
+  
+  update_text(now_text_layer, now_center_layer, &now_text_style, now_text_default);
+  layer_center_vertical(now_center_layer, window_get_root_layer(now_window), layers[0]);
 }
 
 void update_clock() {
-  update_center_text(clock_text_layer, &clock_text_style, clock_text);
-  update_below_text(clock_date_layer, (Layer*)clock_text_layer, &clock_date_style, clock_date);
+  Layer* layers[] = {
+    (Layer*)clock_text_layer,
+    (Layer*)clock_date_layer,
+    NULL
+  };
+
+  update_text(clock_text_layer, clock_center_layer, &clock_text_style, clock_text);
+  update_text(clock_date_layer, clock_center_layer, &clock_date_style, clock_date);
+  layer_center_vertical(clock_center_layer, window_get_root_layer(clock_window), layers[0]);
 }
 
 void handle_clock_show_timeout() {
@@ -237,9 +249,11 @@ void handle_init(void) {
   layer_set_update_proc(now_battery_layer, &draw_battery);
   layer_add_child(window_get_root_layer(now_window), now_battery_layer);
   
+  now_center_layer = layer_create(GRect(0, 0, bounds.size.w, 20));
+  layer_add_child(window_get_root_layer(now_window), (Layer*)now_center_layer);
   
-  now_text_layer = text_layer_create(GRect(0, 0, 144, 20));
-  layer_add_child(window_get_root_layer(now_window), (Layer*)now_text_layer);
+  now_text_layer = text_layer_create(GRect(0, 0, bounds.size.w, 20));
+  layer_add_child(now_center_layer, (Layer*)now_text_layer);
   
   update_now();
   window_stack_push(now_window, true);
@@ -270,11 +284,14 @@ void handle_init(void) {
   layer_set_update_proc(clock_battery_layer, &draw_battery);
   layer_add_child(window_get_root_layer(clock_window), clock_battery_layer);
   
-  clock_text_layer = text_layer_create(GRect(0, 0, 144, 20));
-  layer_add_child(window_get_root_layer(clock_window), (Layer*)clock_text_layer);
+  clock_center_layer = layer_create(GRect(0, 0, bounds.size.w, 20));
+  layer_add_child(window_get_root_layer(clock_window), (Layer*)clock_center_layer);
 
-  clock_date_layer = text_layer_create(GRect(0, 0, 144, 20));
-  layer_add_child(window_get_root_layer(clock_window), (Layer*)clock_date_layer);
+  clock_text_layer = text_layer_create(GRect(0, 0, bounds.size.w, 20));
+  layer_add_child(clock_center_layer, (Layer*)clock_text_layer);
+
+  clock_date_layer = text_layer_create(GRect(0, 0, bounds.size.w, 20));
+  layer_add_child(clock_center_layer, (Layer*)clock_date_layer);
   
   update_clock();
   

@@ -8,7 +8,15 @@
     "longName": "Now+ Watchface",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/now_plus_icon.png",
+                "menuIcon": true,
+                "name": "IMAGE_NOW_PLUS_ICON",
+                "targetPlatforms": null,
+                "type": "bitmap"
+            }
+        ]
     },
     "sdkVersion": "3",
     "shortName": "Now+ Watchface",
