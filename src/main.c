@@ -99,7 +99,7 @@ void draw_battery(Layer *layer, GContext *ctx) {
     graphics_context_set_fill_color(ctx, style->normal);
     graphics_draw_rect(ctx, GRect(bounds.origin.x, bounds.origin.y, bounds.size.w * 90 / 100, bounds.size.h));
     graphics_fill_rect(ctx, GRect(bounds.origin.x + (bounds.size.w * 90 / 100), bounds.origin.y + nip_space, bounds.size.w * 10 / 100, bounds.size.h - (2 * nip_space)), 2, GCornersRight);
-    for(int16_t i = 3; i < MAX(4, (bounds.size.w * 90 * state.charge_percent / (100 * 100)) - 3); i += 4) {
+    for(int16_t i = 3; i <= MAX(4, (bounds.size.w * 90 * state.charge_percent / (100 * 100))); i += 4) {
       graphics_fill_rect(ctx, GRect(bounds.origin.x + i, bounds.origin.y + 2, 2, bounds.size.h - 4), 2, GCornersAll);
     }
   }
