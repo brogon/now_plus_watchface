@@ -1,0 +1,23 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "Bj\u00f6rn Schneider",
+    "enableMultiJS": true,
+    "longName": "Now+ Watchface",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "Now+ Watchface",
+    "targetPlatforms": [
+        "basalt"
+    ],
+    "uuid": "27d82cd3-63b5-410c-8e43-12ea4429e1b7",
+    "versionLabel": "0.1",
+    "watchapp": {
+        "watchface": true
+    }
+}
