@@ -105,20 +105,20 @@ void draw_battery(Layer *layer, GContext *ctx) {
   }
 }
 
-void layer_center_vertical(Layer *layer, Layer *parent, Layer *children) {
+void layer_center_vertical(Layer *layer, Layer *parent, Layer* children[]) {
   GRect bounds_parent = layer_get_bounds(parent);
   GSize content = { 0, 0 };
   
-  for(void *l = children; l != NULL; l += sizeof(void*)) {
-    GRect frame = layer_get_frame((Layer*)l);
-    layer_set_frame((Layer*)l, GRect(0, content.h, bounds_parent.size.w, content.h + frame.size.h));
+  for(uint8_t i = 0; children[i] != NULL; i++) {
+    GRect frame = layer_get_frame(children[i]);
+    layer_set_frame(children[i], GRect(0, content.h, bounds_parent.size.w, content.h + frame.size.h));
     content.h = (content.h ? content.h + 5: content.h) + frame.size.h;
   }
   
-  layer_set_frame((Layer*)layer, GRect(bounds_parent.origin.x,
-                                       bounds_parent.origin.y + ((bounds_parent.size.h - content.h) / 2) - 5,
-                                       bounds_parent.size.w,
-                                       content.h));
+  layer_set_frame(layer, GRect(bounds_parent.origin.x,
+                               bounds_parent.origin.y + ((bounds_parent.size.h - content.h) / 2) - 5,
+                               bounds_parent.size.w,
+                               content.h));
 }
 
 void update_text(TextLayer *layer, Layer *parent, const TextStyle *style, const char *text) {
@@ -145,30 +145,7 @@ void update_now() {
   };
   
   update_text(now_text_layer, now_center_layer, &now_text_style, now_text_default);
-  layer_center_vertical(now_center_layer, window_get_root_layer(now_window), layers[0]);
-}
-
-void update_clock() {
-  Layer* layers[] = {
-    (Layer*)clock_text_layer,
-    (Layer*)clock_date_layer,
-    NULL
-  };
-
-  update_text(clock_text_layer, clock_center_layer, &clock_text_style, clock_text);
-  update_text(clock_date_layer, clock_center_layer, &clock_date_style, clock_date);
-  layer_center_vertical(clock_center_layer, window_get_root_layer(clock_window), layers[0]);
-}
-
-void handle_clock_show_timeout() {
-  if(clock_show) {
-    window_stack_remove(clock_window, false);
-    if(clock_show_timer) {
-      app_timer_cancel(clock_show_timer);
-      clock_show_timer = NULL;
-    }
-    clock_show = false;
-  }
+  layer_center_vertical(now_center_layer, window_get_root_layer(now_window), layers);
 }
 
 const char* get_localized_date_format() {
@@ -187,13 +164,37 @@ const char* get_localized_date_format() {
   return format;
 }
 
+void update_clock() {
+  Layer* layers[] = {
+    (Layer*)clock_text_layer,
+    (Layer*)clock_date_layer,
+    NULL
+  };
+
+  time_t temp = time(NULL);
+  struct tm *t = localtime(&temp);
+
+  clock_copy_time_string(clock_text, sizeof(clock_text));
+  strftime(clock_date, sizeof(clock_date), get_localized_date_format(), t);
+  
+  update_text(clock_text_layer, clock_center_layer, &clock_text_style, clock_text);
+  update_text(clock_date_layer, clock_center_layer, &clock_date_style, clock_date);
+  layer_center_vertical(clock_center_layer, window_get_root_layer(clock_window), layers);
+}
+
+void handle_clock_show_timeout() {
+  if(clock_show) {
+    window_stack_remove(clock_window, false);
+    if(clock_show_timer) {
+      app_timer_cancel(clock_show_timer);
+      clock_show_timer = NULL;
+    }
+    clock_show = false;
+  }
+}
+
 void handle_tap(AccelAxisType axis, int32_t direction) {
   if (!clock_show) {
-    time_t temp = time(NULL);
-    struct tm *t = localtime(&temp);
-    
-    clock_copy_time_string(clock_text, sizeof(clock_text));
-    strftime(clock_date, sizeof(clock_date), get_localized_date_format(), t);
     update_clock();
     window_stack_push(clock_window, false);
     clock_show = true;
@@ -284,10 +285,10 @@ void handle_init(void) {
   layer_set_update_proc(clock_battery_layer, &draw_battery);
   layer_add_child(window_get_root_layer(clock_window), clock_battery_layer);
   
-  clock_center_layer = layer_create(GRect(0, 0, bounds.size.w, 20));
+  clock_center_layer = layer_create(GRect(0, 0, bounds.size.w, bounds.size.h));
   layer_add_child(window_get_root_layer(clock_window), (Layer*)clock_center_layer);
 
-  clock_text_layer = text_layer_create(GRect(0, 0, bounds.size.w, 20));
+  clock_text_layer = text_layer_create(GRect(0, 0, bounds.size.w, bounds.size.h));
   layer_add_child(clock_center_layer, (Layer*)clock_text_layer);
 
   clock_date_layer = text_layer_create(GRect(0, 0, bounds.size.w, 20));
