@@ -109,7 +109,7 @@
               <option value="GOTHIC_24">Gothic 24</option>
               <option value="GOTHIC_24_BOLD">Gothic 24 Bold</option>
               <option value="GOTHIC_28">Gothic 28</option>
-              <option value="GOTHIC_28_BOLD" selected>Gothic 28 Bold</option>
+              <option value="GOTHIC_28_BOLD">Gothic 28 Bold</option>
               <option value="BITHAM_30_BLACK">Bitham 30 Black</option>
               <option value="BITHAM_42_BOLD">Bitham 42 Bold</option>
               <option value="BITHAM_42_LIGHT">Bitham 42 Light</option>
@@ -120,12 +120,12 @@
               <legend>Show battery symbol:</legend>
               <input name="now_battery_show" id="now_battery_show_always" value="ALWAYS" type="radio">
               <label for="now_battery_show_always">Always</label>
-              <input name="now_battery_show" id="now_battery_show_low" value="LOW" checked="checked" type="radio">
+              <input name="now_battery_show" id="now_battery_show_low" value="LOW" type="radio">
               <label for="now_battery_show_low">Only if low</label>
               <input name="now_battery_show" id="now_battery_show_never" value="NEVER" type="radio">
               <label for="now_battery_show_never">Never</label>
             </fieldset>
-            <input name="now_battery_blinks" id="now_battery_blinks" checked="checked" type="checkbox">
+            <input name="now_battery_blinks" id="now_battery_blinks" type="checkbox">
             <label for="now_battery_blinks">Blinking battery symbol if low</label>
           </div>
           <div class="ui-body ui-body-a ui-corner-all" style="margin-top: 0.5em;">
@@ -148,7 +148,7 @@
               <option value="BITHAM_34_MEDIUM_NUMBERS">Bitham 34 Medium</option>
               <option value="BITHAM_42_BOLD">Bitham 42 Bold</option>
               <option value="BITHAM_42_LIGHT">Bitham 42 Light</option>
-              <option value="BITHAM_42_MEDIUM_NUMBERS" selected>Bitham 42 Medium</option>
+              <option value="BITHAM_42_MEDIUM_NUMBERS">Bitham 42 Medium</option>
               <option value="ROBOTO_CONDENSED_21">Roboto 21 Condensed</option>
               <option value="ROBOTO_BOLD_SUBSET_49">Roboto 49 Bold</option>
               <option value="DROID_SERIF_28_BOLD">Droid 28 Bold</option>
@@ -164,7 +164,7 @@
             <select name="clock_date_font" id="clock_date_font">
               <option value="GOTHIC_14">Gothic 14</option>
               <option value="GOTHIC_14_BOLD">Gothic 14 Bold</option>
-              <option value="GOTHIC_18" selected>Gothic 18</option>
+              <option value="GOTHIC_18">Gothic 18</option>
               <option value="GOTHIC_18_BOLD">Gothic 18 Bold</option>
               <option value="GOTHIC_24">Gothic 24</option>
               <option value="GOTHIC_24_BOLD">Gothic 24 Bold</option>
@@ -178,14 +178,14 @@
             </select>
             <fieldset data-role="controlgroup" data-type="horizontal">
               <legend>Show battery symbol:</legend>
-              <input name="clock_battery_show" id="clock_battery_show_always" value="ALWAYS" checked="checked" type="radio">
+              <input name="clock_battery_show" id="clock_battery_show_always" value="ALWAYS" type="radio">
               <label for="clock_battery_show_always">Always</label>
               <input name="clock_battery_show" id="clock_battery_show_low" value="LOW" type="radio">
               <label for="clock_battery_show_low">Only if low</label>
               <input name="clock_battery_show" id="clock_battery_show_never" value="NEVER" type="radio">
               <label for="clock_battery_show_never">Never</label>
             </fieldset>
-            <input name="clock_battery_blinks" id="clock_battery_blinks" checked="checked" type="checkbox">
+            <input name="clock_battery_blinks" id="clock_battery_blinks" type="checkbox">
             <label for="clock_battery_blinks">Blinking battery symbol if low</label>
             <label for="clock_delay">Clock show timeout (seconds):</label>
             <input name="clock_delay" id="clock_delay" value="4" min="1" max="20" data-highlight="true" type="range">
