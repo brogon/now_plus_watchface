@@ -26,6 +26,8 @@
           else 
             $('#now_battery_show_low').prop("checked", true).checkboxradio("refresh");
           $('#now_battery_blinks').prop("checked", conf['now_battery_blinks'] ? true : false).checkboxradio("refresh");
+          $('#now_battery_color').val(conf['now_battery_color']);
+          $('#now_battery_low').val(conf['now_battery_low']);
 
           $('#clock_text').val(conf['clock_text']);
           $('#clock_color').val(conf['clock_color']);
@@ -41,6 +43,8 @@
           else 
             $('#clock_battery_show_low').prop("checked", true).checkboxradio("refresh");
           $('#clock_battery_blinks').prop("checked", conf['clock_battery_blinks'] ? true : false).checkboxradio("refresh");
+          $('#clock_battery_color').val(conf['clock_battery_color']);
+          $('#clock_battery_low').val(conf['clock_battery_low']);
           $('#clock_delay').val(conf['clock_delay']).slider("refresh");
         }
 
@@ -53,6 +57,8 @@
           conf['now_font']             = $('#now_font').val();
           conf['now_battery_show']     = $('#now_battery_show input:radio:checked').val();
           conf['now_battery_blinks']   = $('#now_battery_blinks').prop("checked") ? true : false;
+          conf['now_battery_color']    = $('#now_battery_color').val();
+          conf['now_battery_low']      = $('#now_battery_low').val();
 
           conf['clock_text']           = $('#clock_text').val();
           conf['clock_color']          = $('#clock_color').val();
@@ -61,6 +67,8 @@
           conf['clock_date_font']      = $('#clock_date_font').val();
           conf['clock_battery_show']   = $('#clock_battery_show input:radio:checked').val();
           conf['clock_battery_blinks'] = $('#clock_battery_blinks').prop("checked") ? true : false;
+          conf['clock_battery_color']  = $('#clock_battery_color').val();
+          conf['clock_battery_low']    = $('#clock_battery_low').val();
           conf['clock_delay']          = parseInt($('#clock_delay').val());
           
           return conf;
@@ -127,6 +135,10 @@
             </fieldset>
             <input name="now_battery_blinks" id="now_battery_blinks" type="checkbox">
             <label for="now_battery_blinks">Blinking battery symbol if low</label>
+            <label for="now_battery_color">Battery color (normal):</label>
+            <input name="now_battery_color" id="now_battery_color" value="#ffffff" type="color">
+            <label for="now_battery_low">Battery color (low charge):</label>
+            <input name="now_battery_low" id="now_battery_low" value="#ff0000" type="color">
           </div>
           <div class="ui-body ui-body-a ui-corner-all" style="margin-top: 0.5em;">
             <h2>'Clock' page</h2>
@@ -187,6 +199,10 @@
             </fieldset>
             <input name="clock_battery_blinks" id="clock_battery_blinks" type="checkbox">
             <label for="clock_battery_blinks">Blinking battery symbol if low</label>
+            <label for="clock_battery_color">Battery color (normal):</label>
+            <input name="clock_battery_color" id="clock_battery_color" value="#ffffff" type="color">
+            <label for="clock_battery_low">Battery color (low charge):</label>
+            <input name="clock_battery_low" id="clock_battery_low" value="#ff0000" type="color">
             <label for="clock_delay">Clock show timeout (seconds):</label>
             <input name="clock_delay" id="clock_delay" value="4" min="1" max="20" data-highlight="true" type="range">
           </div>
