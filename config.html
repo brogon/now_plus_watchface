@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html class="ui-mobile">
+  <head>
+    <title>Now+ Watchface configuration</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no" name="viewport">
+    <link href="js/jquery.mobile-1.4.5.min.css" rel="stylesheet" />
+    <link href="js/spectrum.css" rel="stylesheet" />
+    <script src="js/jquery-1.12.2.min.js" type="application/javascript"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js" type="application/javascript"></script>
+    <script src="js/spectrum.js" type="application/javascript"></script>
+  </head>
+  <body id="ui-page-top" class="ui-mobile-viewport ui-overlay-a">
+    <div data-role="page">
+      <div role="main" class="ui-content">
+        <form>
+          <div class="ui-body ui-body-a ui-corner-all">
+            <h2>'Now' page</h2>
+            <label for="now_text">'Now' text to show:</label>
+            <input name="now_text" id="now_text" placeholder="NOW" value="" data-clear-btn="true" type="text">
+            <label for="now_color">Text color:</label>
+            <input name="now_color" id="now_color" value="#ffffff" type="color">
+            <label for="now_background">Window background color:</label>
+            <input name="now_background" id="now_background" value="#000000" type="color">
+            <label for="now_font">Font:</label>
+            <select name="now_font" id="now_font">
+              <option value="GOTHIC_14">Gothic 14</option>
+              <option value="GOTHIC_14_BOLD">Gothic 14 Bold</option>
+              <option value="GOTHIC_18">Gothic 18</option>
+              <option value="GOTHIC_18_BOLD">Gothic 18 Bold</option>
+              <option value="GOTHIC_24">Gothic 24</option>
+              <option value="GOTHIC_24_BOLD">Gothic 24 Bold</option>
+              <option value="GOTHIC_28">Gothic 28</option>
+              <option value="GOTHIC_28_BOLD" selected>Gothic 28 Bold</option>
+              <option value="BITHAM_30_BLACK">Bitham 30 Black</option>
+              <option value="BITHAM_42_BOLD">Bitham 42 Bold</option>
+              <option value="BITHAM_42_LIGHT">Bitham 42 Light</option>
+              <option value="ROBOTO_CONDENSED_21">Roboto 21 Condensed</option>
+              <option value="DROID_SERIF_28_BOLD">Droid 28 Bold</option>
+            </select>
+            <fieldset data-role="controlgroup" data-type="horizontal">
+              <legend>Show battery symbol:</legend>
+              <input name="now_battery_show_always" id="now_battery_show_always" value="ALWAYS" type="radio">
+              <label for="now_battery_show_always">Always</label>
+              <input name="now_battery_show_low" id="now_battery_show_low" value="LOW" checked="checked" type="radio">
+              <label for="now_battery_show_low">Only if low</label>
+              <input name="now_battery_show_never" id="now_battery_show_never" value="NEVER" type="radio">
+              <label for="now_battery_show_never">Never</label>
+            </fieldset>
+            <input name="now_battery_blinks" id="now_battery_blinks" checked="checked" type="checkbox">
+            <label for="now_battery_blinks">Blinking battery symbol if low</label>
+          </div>
+          <div class="ui-body ui-body-a ui-corner-all" style="margin-top: 0.5em;">
+            <h2>'Clock' page</h2>
+            <label for="clock_color">Text color:</label>
+            <input name="clock_color" id="clock_color" value="#ffffff" type="color">
+            <label for="clock_background">Window background color:</label>
+            <input name="clock_background" id="clock_background" value="#000000" type="color">
+            <label for="clock_font">Clock font:</label>
+            <select name="clock_font" id="clock_font">
+              <option value="GOTHIC_14">Gothic 14</option>
+              <option value="GOTHIC_14_BOLD">Gothic 14 Bold</option>
+              <option value="GOTHIC_18">Gothic 18</option>
+              <option value="GOTHIC_18_BOLD">Gothic 18 Bold</option>
+              <option value="GOTHIC_24">Gothic 24</option>
+              <option value="GOTHIC_24_BOLD">Gothic 24 Bold</option>
+              <option value="GOTHIC_28">Gothic 28</option>
+              <option value="GOTHIC_28_BOLD">Gothic 28 Bold</option>
+              <option value="BITHAM_30_BLACK">Bitham 30 Black</option>
+              <option value="BITHAM_34_MEDIUM_NUMBERS">Bitham 34 Medium</option>
+              <option value="BITHAM_42_BOLD">Bitham 42 Bold</option>
+              <option value="BITHAM_42_LIGHT">Bitham 42 Light</option>
+              <option value="BITHAM_42_MEDIUM_NUMBERS" selected>Bitham 42 Medium</option>
+              <option value="ROBOTO_CONDENSED_21">Roboto 21 Condensed</option>
+              <option value="ROBOTO_BOLD_SUBSET_49">Roboto 49 Bold</option>
+              <option value="DROID_SERIF_28_BOLD">Droid 28 Bold</option>
+              <option value="LECO_20_BOLD_NUMBERS">LECO 20 Bold</option>
+              <option value="LECO_26_BOLD_NUMBERS_AM_PM">LECO 26 Bold</option>
+              <option value="LECO_28_LIGHT_NUMBERS">LECO 28 Light</option>
+              <option value="LECO_32_BOLD_NUMBERS">LECO 32 Bold</option>
+              <option value="LECO_36_BOLD_NUMBERS">LECO 36 Bold</option>
+              <option value="LECO_38_BOLD_NUMBERS">LECO 28 Bold</option>
+              <option value="LECO_42_NUMBERS">LECO 42</option>
+            </select>
+            <label for="clock_date_font">Date font:</label>
+            <select name="clock_date_font" id="clock_date_font">
+              <option value="GOTHIC_14">Gothic 14</option>
+              <option value="GOTHIC_14_BOLD">Gothic 14 Bold</option>
+              <option value="GOTHIC_18" selected>Gothic 18</option>
+              <option value="GOTHIC_18_BOLD">Gothic 18 Bold</option>
+              <option value="GOTHIC_24">Gothic 24</option>
+              <option value="GOTHIC_24_BOLD">Gothic 24 Bold</option>
+              <option value="GOTHIC_28">Gothic 28</option>
+              <option value="GOTHIC_28_BOLD">Gothic 28 Bold</option>
+              <option value="BITHAM_30_BLACK">Bitham 30 Black</option>
+              <option value="BITHAM_42_BOLD">Bitham 42 Bold</option>
+              <option value="BITHAM_42_LIGHT">Bitham 42 Light</option>
+              <option value="ROBOTO_CONDENSED_21">Roboto 21 Condensed</option>
+              <option value="DROID_SERIF_28_BOLD">Droid 28 Bold</option>
+            </select>
+            <fieldset data-role="controlgroup" data-type="horizontal">
+              <legend>Show battery symbol:</legend>
+              <input name="clock_battery_show_always" id="clock_battery_show_always" value="ALWAYS" checked="checked" type="radio">
+              <label for="clock_battery_show_always">Always</label>
+              <input name="clock_battery_show_low" id="clock_battery_show_low" value="LOW" type="radio">
+              <label for="clock_battery_show_low">Only if low</label>
+              <input name="clock_battery_show_never" id="clock_battery_show_never" value="NEVER" type="radio">
+              <label for="clock_battery_show_never">Never</label>
+            </fieldset>
+            <input name="clock_battery_blinks" id="clock_battery_blinks" checked="checked" type="checkbox">
+            <label for="clock_battery_blinks">Blinking battery symbol if low</label>
+            <label for="clock_delay">Clock show timeout (seconds):</label>
+            <input name="clock_delay" id="clock_delay" value="4" min="1" max="20" data-highlight="true" type="range">
+          </div>
+        </form>
+      </div><!-- /content -->
+    </div><!-- /page -->
+  </body>
+</html>
