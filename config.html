@@ -9,9 +9,87 @@
     <script src="js/jquery-1.12.2.min.js" type="application/javascript"></script>
     <script src="js/jquery.mobile-1.4.5.min.js" type="application/javascript"></script>
     <script src="js/spectrum.js" type="application/javascript"></script>
+    <script type="application/javascript">
+      (function() {
+        
+        function load_settings(conf) {
+          $('#now_text').val(conf['now_text']);
+          $('#now_color').val(conf['now_color']);
+          $('#now_background').val(conf['now_background']);
+          $('#now_font').val(conf['now_font']);
+          if(conf['now_battery_show'] == "ALWAYS")
+            $('#now_battery_show_always').prop("checked", true);
+          else if(conf['now_battery_show'] == "LOW")
+            $('#now_battery_show_low').prop("checked", true);
+          else if(conf['now_battery_show'] == "NEVER")
+            $('#now_battery_show_never').prop("checked", true);
+          else 
+            $('#now_battery_show_low').prop("checked", true);
+          $('#now_battery_blinks').prop("checked", conf['now_battery_blinks'] ? true : false);
+
+          $('#clock_text').val(conf['clock_text']);
+          $('#clock_color').val(conf['clock_color']);
+          $('#clock_background').val(conf['clock_background']);
+          $('#clock_font').val(conf['clock_font']);
+          $('#clock_date_font').val(conf['clock_date_font']);
+          if(conf['clock_battery_show'] == "ALWAYS")
+            $('#clock_battery_show_always').prop("checked", true);
+          else if(conf['clock_battery_show'] == "LOW")
+            $('#clock_battery_show_low').prop("checked", true);
+          else if(conf['clock_battery_show'] == "NEVER")
+            $('#clock_battery_show_never').prop("checked", true);
+          else 
+            $('#clock_battery_show_low').prop("checked", true);
+          $('#clock_battery_blinks').prop("checked", conf['clock_battery_blinks'] ? true : false);
+          $('#clock_delay').val(conf['clock_delay']);
+        }
+
+        function get_settings() {
+          var conf = {};
+          
+          conf['now_text']             = $('#now_text').val();
+          conf['now_color']            = $('#now_color').val();
+          conf['now_background']       = $('#now_background').val();
+          conf['now_font']             = $('#now_font').val();
+          conf['now_battery_show']     = $('#now_battery_show input:radio:checked').val();
+          conf['now_battery_blinks']   = $('#now_battery_blinks').prop("checked") ? true : false;
+
+          conf['clock_text']           = $('#clock_text').val();
+          conf['clock_color']          = $('#clock_color').val();
+          conf['clock_background']     = $('#clock_background').val();
+          conf['clock_font']           = $('#clock_font').val();
+          conf['clock_date_font']      = $('#clock_date_font').val();
+          conf['clock_battery_show']   = $('#clock_battery_show input:radio:checked').val();
+          conf['clock_battery_blinks'] = $('#clock_battery_blinks').prop("checked") ? true : false;
+          conf['clock_delay']          = parseInt($('#clock_delay').val());
+          
+          return conf;
+        }
+        
+        function save_config(e) {
+          var conf = get_settings();
+          var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(conf));
+          
+          document.location = location;
+        }
+        
+        $().ready(function() {
+            var conf = JSON.parse(decodeURIComponent(window.location.hash.substr(1)));
+            
+            load_settings(conf);
+
+            $('#save_config').click(save_config);
+          });
+        
+      })();
+    </script>
   </head>
   <body id="ui-page-top" class="ui-mobile-viewport ui-overlay-a">
     <div data-role="page">
+      <div data-role="header" role="banner" data-position="fixed" class="ui-header ui-bar-inherit">
+        <h1 class="ui-title" role="heading" aria-level="1">Now+ Watchface Settings</h1>
+        <a id="save_config" href="#" data-icon="check" class="ui-btn-right">Save</a>
+      </div>
       <div role="main" class="ui-content">
         <form>
           <div class="ui-body ui-body-a ui-corner-all">
@@ -38,13 +116,13 @@
               <option value="ROBOTO_CONDENSED_21">Roboto 21 Condensed</option>
               <option value="DROID_SERIF_28_BOLD">Droid 28 Bold</option>
             </select>
-            <fieldset data-role="controlgroup" data-type="horizontal">
+            <fieldset id="now_battery_show" data-role="controlgroup" data-type="horizontal">
               <legend>Show battery symbol:</legend>
-              <input name="now_battery_show_always" id="now_battery_show_always" value="ALWAYS" type="radio">
+              <input name="now_battery_show" id="now_battery_show_always" value="ALWAYS" type="radio">
               <label for="now_battery_show_always">Always</label>
-              <input name="now_battery_show_low" id="now_battery_show_low" value="LOW" checked="checked" type="radio">
+              <input name="now_battery_show" id="now_battery_show_low" value="LOW" checked="checked" type="radio">
               <label for="now_battery_show_low">Only if low</label>
-              <input name="now_battery_show_never" id="now_battery_show_never" value="NEVER" type="radio">
+              <input name="now_battery_show" id="now_battery_show_never" value="NEVER" type="radio">
               <label for="now_battery_show_never">Never</label>
             </fieldset>
             <input name="now_battery_blinks" id="now_battery_blinks" checked="checked" type="checkbox">
@@ -100,11 +178,11 @@
             </select>
             <fieldset data-role="controlgroup" data-type="horizontal">
               <legend>Show battery symbol:</legend>
-              <input name="clock_battery_show_always" id="clock_battery_show_always" value="ALWAYS" checked="checked" type="radio">
+              <input name="clock_battery_show" id="clock_battery_show_always" value="ALWAYS" checked="checked" type="radio">
               <label for="clock_battery_show_always">Always</label>
-              <input name="clock_battery_show_low" id="clock_battery_show_low" value="LOW" type="radio">
+              <input name="clock_battery_show" id="clock_battery_show_low" value="LOW" type="radio">
               <label for="clock_battery_show_low">Only if low</label>
-              <input name="clock_battery_show_never" id="clock_battery_show_never" value="NEVER" type="radio">
+              <input name="clock_battery_show" id="clock_battery_show_never" value="NEVER" type="radio">
               <label for="clock_battery_show_never">Never</label>
             </fieldset>
             <input name="clock_battery_blinks" id="clock_battery_blinks" checked="checked" type="checkbox">
