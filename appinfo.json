@@ -1,7 +1,25 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "clock_background": 7,
+        "clock_battery_blinks": 11,
+        "clock_battery_color": 15,
+        "clock_battery_low": 16,
+        "clock_battery_show": 10,
+        "clock_color": 6,
+        "clock_date_font": 9,
+        "clock_delay": 12,
+        "clock_font": 8,
+        "now_background": 2,
+        "now_battery_blinks": 5,
+        "now_battery_color": 13,
+        "now_battery_low": 14,
+        "now_battery_show": 4,
+        "now_color": 1,
+        "now_font": 3,
+        "now_text": 0
+    },
     "capabilities": [
-        ""
+        "configurable"
     ],
     "companyName": "Bj\u00f6rn Schneider",
     "enableMultiJS": true,
@@ -23,7 +41,7 @@
     "targetPlatforms": [
         "basalt"
     ],
-    "uuid": "27d82cd3-63b5-410c-8e43-12ea4429e1b7",
+    "uuid": "2cdd71e7-8019-4bdf-97e3-44d7072046b1",
     "versionLabel": "0.1",
     "watchapp": {
         "watchface": true
