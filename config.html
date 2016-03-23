@@ -16,32 +16,32 @@
           $('#now_text').val(conf['now_text']);
           $('#now_color').val(conf['now_color']);
           $('#now_background').val(conf['now_background']);
-          $('#now_font').val(conf['now_font']);
+          $('#now_font').val(conf['now_font']).selectmenu("refresh");
           if(conf['now_battery_show'] == "ALWAYS")
-            $('#now_battery_show_always').prop("checked", true);
+            $('#now_battery_show_always').prop("checked", true).checkboxradio("refresh");
           else if(conf['now_battery_show'] == "LOW")
-            $('#now_battery_show_low').prop("checked", true);
+            $('#now_battery_show_low').prop("checked", true).checkboxradio("refresh");
           else if(conf['now_battery_show'] == "NEVER")
-            $('#now_battery_show_never').prop("checked", true);
+            $('#now_battery_show_never').prop("checked", true).checkboxradio("refresh");
           else 
-            $('#now_battery_show_low').prop("checked", true);
-          $('#now_battery_blinks').prop("checked", conf['now_battery_blinks'] ? true : false);
+            $('#now_battery_show_low').prop("checked", true).checkboxradio("refresh");
+          $('#now_battery_blinks').prop("checked", conf['now_battery_blinks'] ? true : false).checkboxradio("refresh");
 
           $('#clock_text').val(conf['clock_text']);
           $('#clock_color').val(conf['clock_color']);
           $('#clock_background').val(conf['clock_background']);
-          $('#clock_font').val(conf['clock_font']);
-          $('#clock_date_font').val(conf['clock_date_font']);
+          $('#clock_font').val(conf['clock_font']).selectmenu("refresh");
+          $('#clock_date_font').val(conf['clock_date_font']).selectmenu("refresh");
           if(conf['clock_battery_show'] == "ALWAYS")
-            $('#clock_battery_show_always').prop("checked", true);
+            $('#clock_battery_show_always').prop("checked", true).checkboxradio("refresh");
           else if(conf['clock_battery_show'] == "LOW")
-            $('#clock_battery_show_low').prop("checked", true);
+            $('#clock_battery_show_low').prop("checked", true).checkboxradio("refresh");
           else if(conf['clock_battery_show'] == "NEVER")
-            $('#clock_battery_show_never').prop("checked", true);
+            $('#clock_battery_show_never').prop("checked", true).checkboxradio("refresh");
           else 
-            $('#clock_battery_show_low').prop("checked", true);
-          $('#clock_battery_blinks').prop("checked", conf['clock_battery_blinks'] ? true : false);
-          $('#clock_delay').val(conf['clock_delay']);
+            $('#clock_battery_show_low').prop("checked", true).checkboxradio("refresh");
+          $('#clock_battery_blinks').prop("checked", conf['clock_battery_blinks'] ? true : false).checkboxradio("refresh");
+          $('#clock_delay').val(conf['clock_delay']).slider("refresh");
         }
 
         function get_settings() {
