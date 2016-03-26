@@ -176,7 +176,7 @@ void update_text(TextLayer *layer, Layer *parent, const TextStyle *style, const 
                                                      style->overflow,
                                                      style->alignment
                                                     );
-  layer_set_frame((Layer*)layer, GRect(0, 0, bounds.size.w, size.h));
+  layer_set_frame((Layer*)layer, GRect(0, 0, bounds.size.w, size.h + 1));
   text_layer_set_text(layer, text);
   text_layer_set_font(layer, fonts_get_system_font(style->font));
   text_layer_set_overflow_mode(layer, style->overflow);
@@ -301,8 +301,6 @@ const char* get_font(const char* name) {
 }
 
 void load_config() {
-  char  font[256];
-  
   if (persist_exists(STORE_NOW_TEXT))
     persist_read_string(STORE_NOW_TEXT, now_text, sizeof(now_text));
   else
@@ -537,6 +535,7 @@ void handle_deinit(void) {
   battery_state_service_unsubscribe();
   accel_tap_service_unsubscribe();
   
+  text_layer_destroy(clock_date_layer);
   text_layer_destroy(clock_text_layer);
   layer_destroy(clock_battery_layer);
   layer_destroy(clock_center_layer);
