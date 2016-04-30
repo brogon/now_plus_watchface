@@ -1,73 +1,4 @@
-#include <pebble.h>
-
-#define MIN(x,y) ((x) < (y) ? (x) : (y))
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
-
-typedef enum  {
-  MSG_NOW_TEXT = 0,
-  MSG_NOW_COLOR = 1,
-  MSG_NOW_BACKGROUND = 2,
-  MSG_NOW_FONT = 3,
-  MSG_NOW_BATTERY_SHOW = 4,
-  MSG_NOW_BATTERY_BLINKS = 5,
-  MSG_CLOCK_COLOR = 6,
-  MSG_CLOCK_BACKGROUND = 7,
-  MSG_CLOCK_FONT = 8,
-  MSG_CLOCK_DATE_FONT = 9,
-  MSG_CLOCK_BATTERY_SHOW = 10,
-  MSG_CLOCK_BATTERY_BLINKS = 11,
-  MSG_CLOCK_DELAY = 12,
-  MSG_NOW_BATTERY_COLOR = 13,
-  MSG_NOW_BATTERY_LOW = 14,
-  MSG_CLOCK_BATTERY_COLOR = 15,
-  MSG_CLOCK_BATTERY_LOW = 16,
-} AppMessageKeys;
-
-typedef enum  {
-  STORE_NOW_TEXT = 0,
-  STORE_NOW_COLOR = 1,
-  STORE_NOW_BACKGROUND = 2,
-  STORE_NOW_FONT = 3,
-  STORE_NOW_BATTERY_DRAW = 4,
-  STORE_NOW_BATTERY_LOW_ONLY = 5,
-  STORE_NOW_BATTERY_BLINKS = 6,
-  STORE_CLOCK_COLOR = 7,
-  STORE_CLOCK_BACKGROUND = 8,
-  STORE_CLOCK_FONT = 9,
-  STORE_CLOCK_DATE_FONT = 10,
-  STORE_CLOCK_BATTERY_DRAW = 11,
-  STORE_CLOCK_BATTERY_LOW_ONLY = 12,
-  STORE_CLOCK_BATTERY_BLINKS = 13,
-  STORE_CLOCK_DELAY = 14,
-  STORE_NOW_BATTERY_COLOR = 15,
-  STORE_NOW_BATTERY_LOW = 16,
-  STORE_CLOCK_BATTERY_COLOR = 17,
-  STORE_CLOCK_BATTERY_LOW = 18,
-} StorageKeys;
-
-typedef struct {
-    char               font[64];
-    GColor             color,
-                       background;
-    GTextOverflowMode  overflow;
-    GTextAlignment     alignment;
-  } TextStyle;
-
-typedef struct {
-    GColor     normal,
-               low;
-    bool       draw,
-               low_only,
-               low_blink,
-               blink_state;
-    uint32_t   blink_delay;
-    AppTimer  *blink_timer;
-  } BatteryStyle;
-
-typedef struct {
-  char  lang[6],
-        datestr[32];
-  } i18n_datedef;
+#include <main.h>
 
 const i18n_datedef  datedefs[] = {
   {"de_DE", "%a, %e. %B %Y"},
@@ -126,7 +57,7 @@ void draw_battery(Layer *layer, GContext *ctx) {
   if ( ! style->draw)
     return;
   
-  if (state.charge_percent <= 10) {
+  if (state.charge_percent < 5) {
     if(style->low_blink) {
       style->blink_state = ! style->blink_state;
       style->blink_timer = app_timer_register(style->blink_delay, &blink_battery, layer);
@@ -146,7 +77,7 @@ void draw_battery(Layer *layer, GContext *ctx) {
     graphics_context_set_fill_color(ctx, style->normal);
     graphics_draw_rect(ctx, GRect(bounds.origin.x, bounds.origin.y, bounds.size.w * 90 / 100, bounds.size.h));
     graphics_fill_rect(ctx, GRect(bounds.origin.x + (bounds.size.w * 90 / 100), bounds.origin.y + nip_space, bounds.size.w * 10 / 100, bounds.size.h - (2 * nip_space)), 2, GCornersRight);
-    for(int16_t i = 3; i <= MAX(4, (bounds.size.w * 90 * state.charge_percent / (100 * 100))); i += 4) {
+    for(int16_t i = 3; i < bounds.size.w * 90 * state.charge_percent / (100 * 100); i += 4) {
       graphics_fill_rect(ctx, GRect(bounds.origin.x + i, bounds.origin.y + 2, 2, bounds.size.h - 4), 2, GCornersAll);
     }
   }
@@ -171,14 +102,14 @@ void layer_center_vertical(Layer *layer, Layer *parent, Layer* children[]) {
 void update_text(TextLayer *layer, Layer *parent, const TextStyle *style, const char *text) {
   GRect bounds = layer_get_bounds(parent);
   GSize size = graphics_text_layout_get_content_size(text,
-                                                     fonts_get_system_font(style->font),
+                                                     get_font(style->font),
                                                      GRect(bounds.origin.x, 0, bounds.size.w, 32767),
                                                      style->overflow,
                                                      style->alignment
                                                     );
   layer_set_frame((Layer*)layer, GRect(0, 0, bounds.size.w, size.h + 1));
   text_layer_set_text(layer, text);
-  text_layer_set_font(layer, fonts_get_system_font(style->font));
+  text_layer_set_font(layer, get_font(style->font));
   text_layer_set_overflow_mode(layer, style->overflow);
   text_layer_set_text_alignment(layer, style->alignment);
   text_layer_set_text_color(layer, style->color);
@@ -273,31 +204,31 @@ void handle_battery_state() {
   notify_battery_layer(clock_battery_layer);
 }
 
-const char* get_font(const char* name) {
-  if (strncmp("GOTHIC_14", name, 32) == 0) { return FONT_KEY_GOTHIC_14; };
-  if (strncmp("GOTHIC_14_BOLD", name, 32) == 0) { return FONT_KEY_GOTHIC_14_BOLD; };
-  if (strncmp("GOTHIC_18", name, 32) == 0) { return FONT_KEY_GOTHIC_18; };
-  if (strncmp("GOTHIC_18_BOLD", name, 32) == 0) { return FONT_KEY_GOTHIC_18_BOLD; };
-  if (strncmp("GOTHIC_24", name, 32) == 0) { return FONT_KEY_GOTHIC_24; };
-  if (strncmp("GOTHIC_24_BOLD", name, 32) == 0) { return FONT_KEY_GOTHIC_24_BOLD; };
-  if (strncmp("GOTHIC_28", name, 32) == 0) { return FONT_KEY_GOTHIC_28; };
-  if (strncmp("GOTHIC_28_BOLD", name, 32) == 0) { return FONT_KEY_GOTHIC_28_BOLD; };
-  if (strncmp("BITHAM_30_BLACK", name, 32) == 0) { return FONT_KEY_BITHAM_30_BLACK; };
-  if (strncmp("BITHAM_34_MEDIUM_NUMBERS", name, 32) == 0) { return FONT_KEY_BITHAM_34_MEDIUM_NUMBERS; };
-  if (strncmp("BITHAM_42_BOLD", name, 32) == 0) { return FONT_KEY_BITHAM_42_BOLD; };
-  if (strncmp("BITHAM_42_LIGHT", name, 32) == 0) { return FONT_KEY_BITHAM_42_LIGHT; };
-  if (strncmp("BITHAM_42_MEDIUM_NUMBERS", name, 32) == 0) { return FONT_KEY_BITHAM_42_MEDIUM_NUMBERS; };
-  if (strncmp("ROBOTO_CONDENSED_21", name, 32) == 0) { return FONT_KEY_ROBOTO_CONDENSED_21; };
-  if (strncmp("ROBOTO_BOLD_SUBSET_49", name, 32) == 0) { return FONT_KEY_ROBOTO_BOLD_SUBSET_49; };
-  if (strncmp("DROID_SERIF_28_BOLD", name, 32) == 0) { return FONT_KEY_DROID_SERIF_28_BOLD; };
-  if (strncmp("LECO_20_BOLD_NUMBERS", name, 32) == 0) { return FONT_KEY_LECO_20_BOLD_NUMBERS; };
-  if (strncmp("LECO_26_BOLD_NUMBERS_AM_PM", name, 32) == 0) { return FONT_KEY_LECO_26_BOLD_NUMBERS_AM_PM; };
-  if (strncmp("LECO_28_LIGHT_NUMBERS", name, 32) == 0) { return FONT_KEY_LECO_28_LIGHT_NUMBERS; };
-  if (strncmp("LECO_32_BOLD_NUMBERS", name, 32) == 0) { return FONT_KEY_LECO_32_BOLD_NUMBERS; };
-  if (strncmp("LECO_36_BOLD_NUMBERS", name, 32) == 0) { return FONT_KEY_LECO_36_BOLD_NUMBERS; };
-  if (strncmp("LECO_38_BOLD_NUMBERS", name, 32) == 0) { return FONT_KEY_LECO_38_BOLD_NUMBERS; };
-  if (strncmp("LECO_42_NUMBERS", name, 32) == 0) { return FONT_KEY_LECO_42_NUMBERS; };
-  return FONT_KEY_GOTHIC_18;
+GFont get_font(const char* name) {
+  if (strncmp("GOTHIC_14", name, 32) == 0)                  { return fonts_get_system_font(FONT_KEY_GOTHIC_14); };
+  if (strncmp("GOTHIC_14_BOLD", name, 32) == 0)             { return fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD); };
+  if (strncmp("GOTHIC_18", name, 32) == 0)                  { return fonts_get_system_font(FONT_KEY_GOTHIC_18); };
+  if (strncmp("GOTHIC_18_BOLD", name, 32) == 0)             { return fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD); };
+  if (strncmp("GOTHIC_24", name, 32) == 0)                  { return fonts_get_system_font(FONT_KEY_GOTHIC_24); };
+  if (strncmp("GOTHIC_24_BOLD", name, 32) == 0)             { return fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD); };
+  if (strncmp("GOTHIC_28", name, 32) == 0)                  { return fonts_get_system_font(FONT_KEY_GOTHIC_28); };
+  if (strncmp("GOTHIC_28_BOLD", name, 32) == 0)             { return fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD); };
+  if (strncmp("BITHAM_30_BLACK", name, 32) == 0)            { return fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK); };
+  if (strncmp("BITHAM_34_MEDIUM_NUMBERS", name, 32) == 0)   { return fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS); };
+  if (strncmp("BITHAM_42_BOLD", name, 32) == 0)             { return fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD); };
+  if (strncmp("BITHAM_42_LIGHT", name, 32) == 0)            { return fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT); };
+  if (strncmp("BITHAM_42_MEDIUM_NUMBERS", name, 32) == 0)   { return fonts_get_system_font(FONT_KEY_BITHAM_42_MEDIUM_NUMBERS); };
+  if (strncmp("ROBOTO_CONDENSED_21", name, 32) == 0)        { return fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21); };
+  if (strncmp("ROBOTO_BOLD_SUBSET_49", name, 32) == 0)      { return fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49); };
+  if (strncmp("DROID_SERIF_28_BOLD", name, 32) == 0)        { return fonts_get_system_font(FONT_KEY_DROID_SERIF_28_BOLD); };
+  if (strncmp("LECO_20_BOLD_NUMBERS", name, 32) == 0)       { return fonts_get_system_font(FONT_KEY_LECO_20_BOLD_NUMBERS); };
+  if (strncmp("LECO_26_BOLD_NUMBERS_AM_PM", name, 32) == 0) { return fonts_get_system_font(FONT_KEY_LECO_26_BOLD_NUMBERS_AM_PM); };
+  if (strncmp("LECO_28_LIGHT_NUMBERS", name, 32) == 0)      { return fonts_get_system_font(FONT_KEY_LECO_28_LIGHT_NUMBERS); };
+  if (strncmp("LECO_32_BOLD_NUMBERS", name, 32) == 0)       { return fonts_get_system_font(FONT_KEY_LECO_32_BOLD_NUMBERS); };
+  if (strncmp("LECO_36_BOLD_NUMBERS", name, 32) == 0)       { return fonts_get_system_font(FONT_KEY_LECO_36_BOLD_NUMBERS); };
+  if (strncmp("LECO_38_BOLD_NUMBERS", name, 32) == 0)       { return fonts_get_system_font(FONT_KEY_LECO_38_BOLD_NUMBERS); };
+  if (strncmp("LECO_42_NUMBERS", name, 32) == 0)            { return fonts_get_system_font(FONT_KEY_LECO_42_NUMBERS); };
+  return fonts_get_system_font(FONT_KEY_GOTHIC_18);
 }
 
 void load_config() {
@@ -317,7 +248,7 @@ void load_config() {
   if (persist_exists(STORE_NOW_FONT))
     persist_read_string(STORE_NOW_FONT, now_text_style.font, sizeof(now_text_style.font));
   else
-    strncpy(now_text_style.font, FONT_KEY_GOTHIC_28_BOLD, sizeof(now_text_style.font));
+    strncpy(now_text_style.font, "", sizeof(now_text_style.font));
   now_text_style.color.argb       = persist_exists(STORE_NOW_COLOR) ? persist_read_int(STORE_NOW_COLOR) : GColorFromRGB(255,255,255).argb;
   now_text_style.background.argb  = persist_exists(STORE_NOW_BACKGROUND) ? persist_read_int(STORE_NOW_BACKGROUND) : GColorFromRGB(0,0,0).argb;
   now_text_style.overflow         = GTextOverflowModeWordWrap;
@@ -334,7 +265,7 @@ void load_config() {
   if (persist_exists(STORE_CLOCK_FONT))
     persist_read_string(STORE_CLOCK_FONT, clock_text_style.font, sizeof(clock_text_style.font));
   else
-    strncpy(clock_text_style.font, FONT_KEY_BITHAM_42_MEDIUM_NUMBERS, sizeof(clock_text_style.font));
+    strncpy(clock_text_style.font, "", sizeof(clock_text_style.font));
   clock_text_style.color.argb      = persist_exists(STORE_CLOCK_COLOR) ? persist_read_int(STORE_CLOCK_COLOR) : GColorFromRGB(255,255,255).argb;
   clock_text_style.background.argb = persist_exists(STORE_CLOCK_BACKGROUND) ? persist_read_int(STORE_CLOCK_BACKGROUND) : GColorFromRGB(0,0,0).argb;
   clock_text_style.overflow        = GTextOverflowModeWordWrap;
@@ -343,7 +274,7 @@ void load_config() {
   if (persist_exists(STORE_CLOCK_DATE_FONT))
     persist_read_string(STORE_CLOCK_DATE_FONT, clock_date_style.font, sizeof(clock_date_style.font));
   else
-    strncpy(clock_date_style.font, FONT_KEY_GOTHIC_18, sizeof(clock_date_style.font));
+    strncpy(clock_date_style.font, "", sizeof(clock_date_style.font));
   clock_date_style.color          = clock_text_style.color;
   clock_date_style.background     = clock_text_style.background;
   clock_date_style.overflow       = GTextOverflowModeWordWrap;
@@ -425,7 +356,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) {
     now_text_style.background = GColorFromHEX(now_background_t->value->uint32);
   }
   if (now_font_t) {
-    strncpy(now_text_style.font, get_font(now_font_t->value->cstring), sizeof(now_text_style.font));
+    strncpy(now_text_style.font, now_font_t->value->cstring, sizeof(now_text_style.font));
   }
   if (now_battery_show_t) {
     now_battery_style.draw = battery_draw(now_battery_show_t->value->cstring);
@@ -448,10 +379,10 @@ void in_received_handler(DictionaryIterator *iter, void *context) {
     clock_text_style.background = clock_date_style.background = GColorFromHEX(clock_background_t->value->uint32);
   }
   if (clock_font_t) {
-    strncpy(clock_text_style.font, get_font(clock_font_t->value->cstring), sizeof(clock_text_style.font));
+    strncpy(clock_text_style.font, clock_font_t->value->cstring, sizeof(clock_text_style.font));
   }
   if (clock_date_font_t) {
-    strncpy(clock_date_style.font, get_font(clock_date_font_t->value->cstring), sizeof(clock_date_style.font));
+    strncpy(clock_date_style.font, clock_date_font_t->value->cstring, sizeof(clock_date_style.font));
   }
   if (clock_battery_show_t) {
     clock_battery_style.draw = battery_draw(clock_battery_show_t->value->cstring);
@@ -523,6 +454,7 @@ void handle_init(void) {
   
   update_clock();
   
+  // Register events
   accel_tap_service_subscribe(&handle_tap);
   battery_state_service_subscribe(&handle_battery_state);
   
@@ -542,6 +474,7 @@ void handle_deinit(void) {
   window_destroy(clock_window);
   
   text_layer_destroy(now_text_layer);
+  layer_destroy(now_battery_layer);
   layer_destroy(now_center_layer);
   window_destroy(now_window);
 }
